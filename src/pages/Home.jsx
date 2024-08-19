@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import Categories from "../components/Categories";
 import Sort from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock/PizzaBlock";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../components/PizzaBlock/Skeleton";
 import { Pagination } from "../components/Pagination";
+import { SearchContext } from "../App";
 
-function Home({ searchValue }) {
+function Home() {
   //https://66b8c8013ce57325ac781dfe.mockapi.io/items
+  const { searchValue } = useContext(SearchContext);
 
   const [items, setItems] = useState([]);
   const [categoryId, setCategoryId] = useState(0);
