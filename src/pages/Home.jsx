@@ -30,7 +30,7 @@ function Home() {
     setIsLoading(true);
 
     fetch(
-      `https://66b8c8013ce57325ac781dfe.mockapi.io/items?page=${currentPage}&limit=3&${
+      `https://66b8c8013ce57325ac781dfe.mockapi.io/items?page=${currentPage}&limit=8&${
         categoryId > 0 ? `category=${categoryId}&` : ""
       }sortBy=${sortType.sortProperty}&order=${sortType.sortOrder}${search}`
     )
@@ -52,7 +52,7 @@ function Home() {
   ));
 
   return (
-    <div className="container">
+    <>
       <div className="content__top">
         <Categories
           value={categoryId}
@@ -63,7 +63,7 @@ function Home() {
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">{isLoading ? skeletons : pizzas}</div>
       <Pagination onChangePage={(number) => setCurrentPage(number)} />
-    </div>
+    </>
   );
 }
 
