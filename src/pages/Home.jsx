@@ -6,14 +6,14 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "../components/PizzaBlock/Skeleton";
 import { Pagination } from "../components/Pagination";
 import { SearchContext } from "../App";
+import axios from "axios";
+import { setCurrentPage } from "../redux/slices/filterSlice";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setCategoryId } from "../redux/slices/filterSlice";
 
 function Home() {
-  const { categoryId, sort: sortType } = useSelector(
-    (state) => state.filter
-  );
+  const { categoryId, sort: sortType, currentPage } = useSelector((state) => state.filter);
   const dispatch = useDispatch();
 
   //https://66b8c8013ce57325ac781dfe.mockapi.io/items
@@ -26,7 +26,6 @@ function Home() {
   //   sortOrder: "desc",
   // });
 
-  const [currentPage, setCurrentPage] = React.useState(1);
 
   const search = searchValue ? `&search=${searchValue}` : "";
 
@@ -36,17 +35,36 @@ function Home() {
     dispatch(setCategoryId(id));
   };
 
+  const onChangePage = (number) => {
+    dispatch(setCurrentPage(number))
+  }
+
   useEffect(() => {
     setIsLoading(true);
 
-    fetch(
-      `https://66b8c8013ce57325ac781dfe.mockapi.io/items?page=${currentPage}&limit=8&${
-        categoryId > 0 ? `category=${categoryId}&` : ""
-      }sortBy=${sortType.sortProperty}&order=${sortType.sortOrder}${search}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setItems(data);
+    // fetch(
+    //   `https://66b8c8013ce57325ac781dfe.mockapi.io/items?page=${currentPage}&limit=8&${
+    //     categoryId > 0 ? `category=${categoryId}&` : ""
+    //   }sortBy=${sortType.sortProperty}&order=${sortType.sortOrder}${search}`
+    // )
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     setItems(data);
+    //     setIsLoading(false);
+    //   });
+
+    axios
+      .get(
+        `https://66b8c8013ce57325ac781dfe.mockapi.io/items?page=${currentPage}&limit=6&${
+          categoryId > 0 ? `category=${categoryId}&` : ""
+        }sortBy=${sortType.sortProperty}&order=${sortType.sortOrder}${search}`
+      )
+      .then((response) => {
+        setItems(response.data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setItems([]);
         setIsLoading(false);
       });
     window.scrollTo(0, 0);
@@ -72,7 +90,7 @@ function Home() {
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">{isLoading ? skeletons : pizzas}</div>
-      <Pagination onChangePage={(number) => setCurrentPage(number)} />
+      <Pagination currentPage={currentPage} onChangePage={onChangePage} />
     </>
   );
 }
