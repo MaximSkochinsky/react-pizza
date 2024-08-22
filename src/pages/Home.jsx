@@ -7,24 +7,34 @@ import { Skeleton } from "../components/PizzaBlock/Skeleton";
 import { Pagination } from "../components/Pagination";
 import { SearchContext } from "../App";
 
+import { useSelector, useDispatch } from "react-redux";
+import { setCategoryId } from "../redux/slices/filterSlice";
+
 function Home() {
+  const { categoryId, sort: sortType } = useSelector(
+    (state) => state.filter
+  );
+  const dispatch = useDispatch();
+
   //https://66b8c8013ce57325ac781dfe.mockapi.io/items
   const { searchValue } = useContext(SearchContext);
 
   const [items, setItems] = useState([]);
-  const [categoryId, setCategoryId] = useState(0);
-  const [sortType, setSortType] = React.useState({
-    name: "популярности (по убыванию)",
-    sortProperty: "rating",
-    sortOrder: "desc",
-  });
+  // const [sortType, setSortType] = React.useState({
+  //   name: "популярности (по убыванию)",
+  //   sortProperty: "rating",
+  //   sortOrder: "desc",
+  // });
+
   const [currentPage, setCurrentPage] = React.useState(1);
 
   const search = searchValue ? `&search=${searchValue}` : "";
 
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log(sortType);
+  const onChangeCategory = (id) => {
+    dispatch(setCategoryId(id));
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -56,9 +66,9 @@ function Home() {
       <div className="content__top">
         <Categories
           value={categoryId}
-          onChangeCategory={(id) => setCategoryId(id)}
+          onChangeCategory={(id) => onChangeCategory(id)}
         />
-        <Sort value={sortType} onChangeSort={(id) => setSortType(id)} />
+        <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">{isLoading ? skeletons : pizzas}</div>
