@@ -26,7 +26,7 @@ function Sort() {
   React.useEffect(() => {
     console.log('Sort mount');
     const handleClickOutside = (event) => {
-      if (!event.path.includes(sortRef.current)) {
+      if (!event.path?.includes(sortRef.current)) {
         setOpen(false);
         console.log('click outside');
       }
